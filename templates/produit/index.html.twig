@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Produits{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Produits</h1>
+
+        <!-- Search Input -->
+        <div class="mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search for produits...">
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-bordered text-center align-middle" id="produitTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Prix</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for produit in produits %}
+                    <tr>
+                        <td>{{ produit.name }}</td>
+                        <td>{{ produit.prix }}</td>
+                        <td>
+                            <a href="{{ path('produit_show', {'id': produit.id}) }}" class="btn btn-outline-primary btn-sm">Show</a>
+                            <a href="{{ path('produit_edit', {'id': produit.id}) }}" class="btn btn-outline-warning btn-sm">Edit</a>
+                            <form method="post" action="{{ path('produit_delete', {'id': produit.id}) }}" style="display:inline-block">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
+                                <button class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ path('produit_new') }}" class="btn btn-success btn-lg">Create new</a>
+        </div>
+    </div>
+
+    {# jQuery Search Functionality #}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#searchInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#produitTable tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+        });
+    </script>
+{% endblock %}
